@@ -1,4 +1,5 @@
 library(dplyr)
+library(ggplot2)
 
 study_names <- c("maths", "reading", "science")
 
@@ -88,3 +89,28 @@ correlation_matrix <- cor(diff_columns, use = "complete.obs")
 
 # Print the correlation matrix
 print(correlation_matrix)
+
+# Reshape the data
+reshaped_data <- combined_differences1 %>%
+  pivot_longer(
+    cols = -Jurisdiction,  # Keep 'Jurisdiction' as is
+    names_to = "Subject",
+    values_to = "Difference"
+  )
+
+# Print the reshaped data
+print(reshaped_data, n = 24)
+
+# Create the ggplot2 plot
+ggplot(reshaped_data, aes(x = Jurisdiction, y = Difference, fill = Subject)) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  labs(
+    title = "Difference between Actual and Predicted PISA Scores in 2022 by Subject",
+    x = "Country",
+    y = "Score Difference",
+    fill = "Subject"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
